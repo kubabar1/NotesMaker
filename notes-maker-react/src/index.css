@@ -12,3 +12,81 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+.modal-header, h4, .close {
+    background-color: #2d3e50;
+    color:white !important;
+    text-align: center;
+    font-size: 30px;
+}
+
+.modal-footer {
+    background-color: #f9f9f9;
+}
+
+#submit-button{
+    background-color: #2d3e50;
+    color:#ffffff;
+}
+
+#sidenav{
+  background-color: #fffffff;
+  margin: 0;
+  padding: 0;
+}
+
+#sidenav-header{
+  background-color: #2d3e50;
+  color: white;
+  height:50px;
+  line-height: 50px;
+  font-size:20px;
+  list-style-type: none;
+}
+
+#sidenav-content {
+  background-color: #ffffff;
+}
+
+#sidenav-content ul {
+  list-style-type: none;
+  margin:0;
+  padding:0;
+}
+
+i {
+  margin-right: 10px;
+}
+
+.nav-link {
+  font-weight: bold;
+  text-decoration: none;
+  font-size: 16px;
+  color: #2d3e50;
+  display: block;
+  height:60px;
+  transition: 0.3s;
+  line-height: 60px;
+  background-color: #eeeeee;
+  padding-left:10px;
+  border-style: solid;
+  border-width: 0 0 2px 0;
+  border-color: #ffffff;
+}
+
+.sub-nav-link {
+  height:60px;
+  line-height: 40px;
+}
+
+.nav-link:hover {
+  color:white;
+  background-color: #2d3e50;
+  cursor:pointer;
+}
+
+.sub-nav-link:hover{
+  color:white;
+  background-color: #2d3e50;
+  cursor:pointer;
+}
