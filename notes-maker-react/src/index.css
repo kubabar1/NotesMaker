@@ -90,3 +90,27 @@ i {
   background-color: #2d3e50;
   cursor:pointer;
 }
+
+.card {
+  /* Add shadows to create the "card" effect */
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  transition: 0.3s;
+}
+
+/* On mouse-over, add a deeper shadow */
+.card:hover {
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+  cursor:pointer;
+}
+
+/* Add some padding inside the card container */
+.card-container {
+  padding: 2px 16px;
+}
+
+.m-0{margin:0;}
+.m-1{margin:0.25rem;}
+.m-2{margin:0.5rem;}
+.m-3{margin:1rem;}
+.m-4{margin:1.5rem;}
+.m-5{margin:3rem;}
