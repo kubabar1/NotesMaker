@@ -1,39 +1,53 @@
 package com.od.notesmaker.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Objects;
 
 @Entity
-@Table(name="notes")
+@Table(name = "notes")
 public class Note implements Serializable {
 
     @Id
-    @Column(name = "ID")
-    private int id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="userID")
+    @ManyToOne
+    @JoinColumn(name = "userID")
     private User user;
 
+    @NotNull
     @Column(name = "name")
     private String name;
 
+    @NotNull
     @Column(name = "content")
     private String content;
 
-    @Column(name = "creationDate")
+    @Column(name = "creationdate")
     private Timestamp creationDate;
 
     public Note() {
     }
 
-    public int getId() {
+    public Note(String name, String content) {
+        this.name = name;
+        this.content = content;
+    }
+
+    public Note(User user, String name, String content) {
+        this.user = user;
+        this.name = name;
+        this.content = content;
+    }
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

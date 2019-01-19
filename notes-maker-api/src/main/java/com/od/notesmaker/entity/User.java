@@ -2,15 +2,17 @@ package com.od.notesmaker.entity;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
 public class User {
 
     @Id
-    @Column(name = "ID")
-    private int id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(name = "name")
     private String name;
@@ -27,8 +29,11 @@ public class User {
     @Column(name = "email")
     private String email;
 
-    @Column(name = "birthDate")
+    @Column(name = "birthdate")
     private Date birthDate;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private Set<Note> notes;
 
     public User() {
     }
@@ -42,11 +47,11 @@ public class User {
         this.birthDate = birthDate;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
