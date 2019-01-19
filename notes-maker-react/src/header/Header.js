@@ -10,14 +10,13 @@ class Header extends Component {
 
         return (
           <div>
-            <Navbar style={{marginBottom: 0}}  collapseOnSelect staticTop fluid>
+            <Navbar style={{marginBottom: 0}}  collapseOnSelect inverse staticTop fluid>
               <Navbar.Header>
                 <Navbar.Brand>
                   <i className="fas fa-user"></i><strong>Jan Kowalski</strong>
                 </Navbar.Brand>
-                <Navbar.Toggle />
               </Navbar.Header>
-                <Nav pullRight>
+              <Navbar.Link pullRight>
                   {isAuthenticated ? (
                       <Button bsStyle="info" className="m-3" onClick={() => signout()}>
                         Log out
@@ -29,7 +28,7 @@ class Header extends Component {
                       </Button>
                     </NavItem>
                   )}
-                </Nav>
+              </Navbar.Link>
             </Navbar>
           </div>
         );
