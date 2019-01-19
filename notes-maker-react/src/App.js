@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import Header from "./header/Header";
 import SideNav from "./navbar/SideNav";
-import Main from "./main/Main";
+import MyNotes from "./main/noteslist/MyNotes";
+import AddNote from "./main/addnote/AddNote";
 import Login from "./login/Login";
 import {Redirect, Switch, Route} from "react-router-dom";
 
@@ -12,7 +13,7 @@ class App extends Component {
 
     this.state = {
       showLoginForm: false,
-      isAuthenticated: false,
+      isAuthenticated: true,
       componentLoaded:false
     };
   }
@@ -86,19 +87,19 @@ class App extends Component {
                 <Route path="/login" component={Empty}/>
                 <PrivateRoute
                   path="/my-notes"
-                  component={Empty}
+                  component={MyNotes}
                   isAuthenticated={this.state.isAuthenticated}
                   handleShowLoginForm={this.handleShowLoginForm}
                   componentLoaded={this.state.componentLoaded}/>
                 <PrivateRoute
                   path="/shared-notes"
-                  component={Empty}
+                  component={MyNotes}
                   isAuthenticated={this.state.isAuthenticated}
                   handleShowLoginForm={this.handleShowLoginForm}
                   componentLoaded={this.state.componentLoaded}/>
                 <PrivateRoute
                   path="/add-note"
-                  component={Empty}
+                  component={AddNote}
                   isAuthenticated={this.state.isAuthenticated}
                   handleShowLoginForm={this.handleShowLoginForm}
                   componentLoaded={this.state.componentLoaded}/>
