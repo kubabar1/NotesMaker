@@ -3,7 +3,7 @@ import Note from './Note';
 import {Button} from "react-bootstrap";
 import {Link} from "react-router-dom";
 
-class MyNotes extends Component {
+class PublicNotes extends Component {
 
     constructor(props){
       super(props);
@@ -23,28 +23,35 @@ class MyNotes extends Component {
         const date = "21-12-2018 12:10:45";
         const author = "Jan Kowalski";
         const content = text.substring(0, 150)+" ...";
-        const id=1;
 
         return (
           <div className="text-center">
             <div className="container-fluid text-center" style={{marginTop:10}}>
               <Link to={'/my-notes'} className="">
-                <Button bsStyle="primary">My notes</Button>
+                <Button bsStyle="link">My notes</Button>
               </Link>
               <Link to={'/public-notes'} className="">
-                <Button bsStyle="link" style={{marginLeft:30}}>Public notes</Button>
+                <Button bsStyle="primary" style={{marginLeft:30}}>Public notes</Button>
               </Link>
             </div>
             <hr></hr>
             <div className="container-fluid m-4">
-              <Note id={id} content={content} title={title} date={date} author={author}/>
-              <Note id={id} content={content} title={title} date={date} author={author}/>
-              <Note id={id} content={content} title={title} date={date} author={author}/>
-              <Note id={id} content={content} title={title} date={date} author={author}/>
+              <Note content={content} title={title} date={date} author={author}/>
+              <Note content={content} title={title} date={date} author={author}/>
+              <Note content={content} title={title} date={date} author={author}/>
+              <Note content={content} title={title} date={date} author={author}/>
+              <Note content={content} title={title} date={date} author={author}/>
+              <Note content={content} title={title} date={date} author={author}/>
+              <Note content={content} title={title} date={date} author={author}/>
+              <Note content={content} title={title} date={date} author={author}/>
+              <Note content={content} title={title} date={date} author={author}/>
+              <Note content={content} title={title} date={date} author={author}/>
+              <Note content={content} title={title} date={date} author={author}/>
+              <Note content={content} title={title} date={date} author={author}/>
             </div>
           </div>
         );
     }
 }
 
-export default MyNotes;
+export default PublicNotes;

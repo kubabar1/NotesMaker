@@ -2,7 +2,11 @@ import React, { Component } from 'react';
 import Header from "./header/Header";
 import SideNav from "./navbar/SideNav";
 import MyNotes from "./main/noteslist/MyNotes";
+import PublicNotes from "./main/noteslist/PublicNotes";
 import AddNote from "./main/addnote/AddNote";
+import NoteView from "./main/noteview/NoteView";
+import Settings from "./main/settings/Settings";
+import ChangePassword from "./main/settings/ChangePassword";
 import Login from "./login/Login";
 import {Redirect, Switch, Route} from "react-router-dom";
 
@@ -92,8 +96,14 @@ class App extends Component {
                   handleShowLoginForm={this.handleShowLoginForm}
                   componentLoaded={this.state.componentLoaded}/>
                 <PrivateRoute
-                  path="/shared-notes"
-                  component={MyNotes}
+                  path="/notes/:id"
+                  component={NoteView}
+                  isAuthenticated={this.state.isAuthenticated}
+                  handleShowLoginForm={this.handleShowLoginForm}
+                  componentLoaded={this.state.componentLoaded}/>
+                <PrivateRoute
+                  path="/public-notes"
+                  component={PublicNotes}
                   isAuthenticated={this.state.isAuthenticated}
                   handleShowLoginForm={this.handleShowLoginForm}
                   componentLoaded={this.state.componentLoaded}/>
@@ -105,7 +115,13 @@ class App extends Component {
                   componentLoaded={this.state.componentLoaded}/>
                 <PrivateRoute
                   path="/settings"
-                  component={Empty}
+                  component={Settings}
+                  isAuthenticated={this.state.isAuthenticated}
+                  handleShowLoginForm={this.handleShowLoginForm}
+                  componentLoaded={this.state.componentLoaded}/>
+                <PrivateRoute
+                  path="/change-password"
+                  component={ChangePassword}
                   isAuthenticated={this.state.isAuthenticated}
                   handleShowLoginForm={this.handleShowLoginForm}
                   componentLoaded={this.state.componentLoaded}/>
