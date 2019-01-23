@@ -1,5 +1,7 @@
 package com.od.notesmaker.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.sql.Date;
 import java.util.List;
@@ -14,21 +16,26 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonIgnore
     @Column(name = "name")
     private String name;
 
+    @JsonIgnore
     @Column(name = "surname")
     private String surname;
 
     @Column(name = "login")
     private String login;
 
+    @JsonIgnore
     @Column(name = "password")
     private String password;
 
+    @JsonIgnore
     @Column(name = "email")
     private String email;
 
+    @JsonIgnore
     @Column(name = "birthdate")
     private Date birthDate;
 
@@ -112,14 +119,13 @@ public class User {
                 Objects.equals(name, user.name) &&
                 Objects.equals(surname, user.surname) &&
                 Objects.equals(login, user.login) &&
-                Objects.equals(password, user.password) &&
                 Objects.equals(email, user.email) &&
                 Objects.equals(birthDate, user.birthDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, surname, login, password, email, birthDate);
+        return Objects.hash(id, name, surname, login, email, birthDate);
     }
 
     @Override
@@ -129,7 +135,7 @@ public class User {
                 ", name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
                 ", login='" + login + '\'' +
-                ", password='" + password + '\'' +
+                ", password= [SECRET]'" +
                 ", email='" + email + '\'' +
                 ", birthDate=" + birthDate +
                 '}';
