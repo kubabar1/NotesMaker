@@ -1,10 +1,11 @@
 package com.od.notesmaker.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.sql.Date;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -16,10 +17,12 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull
     @JsonIgnore
     @Column(name = "name")
     private String name;
 
+    @NotNull
     @JsonIgnore
     @Column(name = "surname")
     private String surname;
@@ -31,11 +34,14 @@ public class User {
     @Column(name = "password")
     private String password;
 
+    @NotNull
     @JsonIgnore
     @Column(name = "email")
     private String email;
 
+    @NotNull
     @JsonIgnore
+    @JsonFormat(pattern = "yyyy-MM-dd ", timezone = "Europe/Warsaw")
     @Column(name = "birthdate")
     private Date birthDate;
 

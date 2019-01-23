@@ -1,5 +1,6 @@
 package com.od.notesmaker.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
@@ -29,9 +30,9 @@ public class Note implements Serializable {
     private String content;
 
     @Column(name = "creationdate")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Europe/Warsaw")
     private Timestamp creationDate;
 
-    @JsonIgnore
     @Column(name = "published")
     private Boolean published;
 

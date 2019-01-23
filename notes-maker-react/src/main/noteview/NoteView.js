@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {Button} from 'react-bootstrap';
-import {SINGLE_USER_NOTE} from "../../environment";
+import {SINGLE_USER_NOTE,PUBLISH_ENDPOINT,UNPUBLISH_ENDPOINT,DELETE_ENDPOINT} from "../../environment";
+import {withRouter} from "react-router-dom";
 
 class NoteView extends Component {
 
@@ -9,7 +10,8 @@ class NoteView extends Component {
 
       this.state={
         note:null,
-        unauthorizedError:false
+        unauthorizedError:false,
+        published:null
       }
     }
 
@@ -21,12 +23,57 @@ class NoteView extends Component {
         credentials: 'include'})
       .then(resp => resp.ok ? resp.json() : this.setState({unauthorizedError:true}))
       .then(json=>this.setState({
-          note:json
+          note:json,
+          published:json.published
         })
       ).catch(e=>console.log(e));
     }
 
 
+    publishButton = (e) => {
+        const note = this.state.note;
+        const published = this.state.published;
+        const id = note.id;
+
+        if(published){
+          fetch(UNPUBLISH_ENDPOINT+"/"+id,{
+            method:"PUT",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include'})
+          .then(resp => this.setState({published:false}))
+          .catch(e=>console.log(e));
+        }else{
+          fetch(PUBLISH_ENDPOINT+"/"+id,{
+            method:"PUT",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include'})
+          .then(resp => {this.setState({published:true});})
+          .catch(e=>console.log(e));
+        }
+    }
+
+    editButton = (e) => {
+      console.log("edit")
+    }
+
+    deleteButton = (e) => {
+      const id = this.state.note.id;
+
+      fetch(DELETE_ENDPOINT+"/"+id,{
+        method:"DELETE",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        credentials: 'include'})
+      .then(resp => this.props.history.push('/my-notes'))
+      .catch(e=>console.log(e));
+    }
+
+//<Button bsStyle="info" style={{marginLeft:20,marginRight:20}} onClick={this.editButton}><i className="fas fa-edit"></i> Edit</Button>
     render() {
         const handle  = this.props.match.params;
         const author = handle.author;
@@ -35,15 +82,16 @@ class NoteView extends Component {
         const currentUser = this.props.currentUser ? this.props.currentUser.login : null;
 
         const note = this.state.note;
+        const published = this.state.published;
 
         return (
           <div className="" style={{marginTop:10}}>
           <div className="container-fluid text-center" style={{marginTop:20}}>
-            {(currentUser == author) && !unauthorizedError ?
+            {note && (currentUser == author) && !unauthorizedError ?
               <div>
-                <Button bsStyle="primary" style={{marginLeft:20,marginRight:20}}><i className="fas fa-share-alt"></i> Publish</Button>
-                <Button bsStyle="info" style={{marginLeft:20,marginRight:20}}><i className="fas fa-edit"></i> Edit</Button>
-                <Button bsStyle="danger" style={{marginLeft:20,marginRight:20}}><i className="fas fa-trash-alt"></i> Delete</Button>
+                <Button bsStyle="primary" style={{marginLeft:20,marginRight:20}} onClick={this.publishButton}><i className="fas fa-share-alt"></i>{published ? "Unpublish" : "Publish"}</Button>
+
+                <Button bsStyle="danger" style={{marginLeft:20,marginRight:20}} onClick={this.deleteButton}><i className="fas fa-trash-alt"></i> Delete</Button>
               </div>
               : ""
             }
@@ -70,4 +118,4 @@ class NoteView extends Component {
     }
 }
 
-export default NoteView;
+export default withRouter(NoteView);

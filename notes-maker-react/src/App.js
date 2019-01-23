@@ -10,17 +10,20 @@ import ChangePassword from "./main/settings/ChangePassword";
 import Login from "./login/Login";
 import {Redirect, Switch, Route} from "react-router-dom";
 import {LOGIN_ENDPOINT,LOGOUT_ENDPOINT,CHECK_AUTHENTICATED,CURRENT_USER} from "./environment";
+//import { withCookies } from 'react-cookie';
 
 class App extends Component {
 
   constructor(props, context) {
     super(props, context);
+    //const {cookies} = props;
 
     this.state = {
       showLoginForm: false,
       isAuthenticated: false,
       componentLoaded:false,
-      currentUser:null
+      currentUser:null,
+      //csrfToken:cookies.get('XSRF-TOKEN')
     };
   }
 
@@ -73,7 +76,7 @@ class App extends Component {
           this.setState({ isAuthenticated:false });
         }
       }).catch(e => console.log(e));
-    setTimeout(cb, 700);
+    setTimeout(cb, 1000);
   }
 
   signout = (cb) => {
@@ -133,7 +136,9 @@ class App extends Component {
                   componentLoaded={this.state.componentLoaded}/>
                 <PrivateRoute
                   path="/settings"
-                  component={Settings}
+                  component={(props) => <Settings {...props}
+                                          currentUser={this.state.currentUser}
+                                          getCurrentUser={this.getCurrentUser}/>}
                   isAuthenticated={this.state.isAuthenticated}
                   handleShowLoginForm={this.handleShowLoginForm}
                   componentLoaded={this.state.componentLoaded}/>
@@ -145,7 +150,8 @@ class App extends Component {
                   componentLoaded={this.state.componentLoaded}/>
                 <PrivateRoute
                   path="/:author/notes/:id"
-                  component={(props) => <NoteView {...props} currentUser={this.state.currentUser}/>}
+                  component={(props) => <NoteView {...props}
+                                          currentUser={this.state.currentUser}/>}
                   isAuthenticated={this.state.isAuthenticated}
                   handleShowLoginForm={this.handleShowLoginForm}
                   componentLoaded={this.state.componentLoaded}/>
@@ -166,7 +172,7 @@ class App extends Component {
   }
 }
 
-export default App;
+export default App;//withCookies(App);
 
 const Empty = () => {
   return "";

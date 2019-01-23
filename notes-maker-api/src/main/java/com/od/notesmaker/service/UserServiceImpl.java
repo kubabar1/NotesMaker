@@ -14,13 +14,36 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public User getUserByLogin(String login) throws UserNotFoundException{
+    public User getUserByLogin(String login) throws UserNotFoundException {
         User user = userRepository.getUserByLogin(login);
 
-        if(user==null){
+        if (user == null) {
             throw new UserNotFoundException("User with given login=\"" + login + "\" not found");
-        }else{
+        } else {
             return userRepository.getUserByLogin(login);
         }
+    }
+
+    @Override
+    public void updateUser(Long userId, User userDetails) throws UserNotFoundException {
+        User oldUser = userRepository.findById(userId).orElseThrow(() ->
+                new UserNotFoundException("User with given ID=\"" + userId + "\" not found"));
+
+        oldUser.setName(userDetails.getName());
+        oldUser.setSurname(userDetails.getSurname());
+        oldUser.setEmail(userDetails.getEmail());
+        oldUser.setBirthDate(userDetails.getBirthDate());
+
+        userRepository.save(oldUser);
+    }
+
+    @Override
+    public void updateUserPassword(Long userId, String newPassword) {
+        User oldUser = userRepository.findById(userId).orElseThrow(() ->
+                new UserNotFoundException("User with given ID=\"" + userId + "\" not found"));
+
+        oldUser.setPassword(newPassword);
+
+        userRepository.save(oldUser);
     }
 }

@@ -1,5 +1,6 @@
 package com.od.notesmaker.config;
 
+import com.google.common.hash.Hashing;
 import com.od.notesmaker.service.AppUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,6 +17,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -23,6 +25,10 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 import static java.util.Arrays.asList;
 
@@ -40,8 +46,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private AppUserDetailsService appUserDetailsService;
 
-    @Value("${spring.security.scanning.token}")
-    private String scanningToken;
+    //@Value("${spring.security.scanning.token}")
+    //private String scanningToken;
 
 
     /*@Autowired
@@ -85,6 +91,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors().and()
                 //.addFilterBefore(new TokenAuthenticationFilter(scanningToken), UsernamePasswordAuthenticationFilter.class)
                 .csrf().disable()
+                //.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                //.and()
                 .exceptionHandling()
                 .authenticationEntryPoint(restAuthenticationEntryPoint) //deafult entry point returns FULL PAGE unauthorized, not well suited for rest login
                 .and()
@@ -123,6 +131,38 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public PasswordEncoder encoder() {
-        return new BCryptPasswordEncoder();
+        return new BCryptPasswordEncoder(){
+            @Override
+            public boolean matches(CharSequence rawPassword, String encodedPassword) {
+                try {
+                    TimeUnit.MILLISECONDS.sleep(new Random().nextInt(200)+100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                return super.matches(rawPassword, encodedPassword);
+            }
+        };
     }
+
+
+    /*@Bean
+    public PasswordEncoder encoder() {
+        return new PasswordEncoder() {
+            @Override
+            public String encode(CharSequence rawPassword) {
+                String sha256hex1 = Hashing.sha256().hashString(rawPassword, StandardCharsets.UTF_8).toString();
+                String sha256hex2 = Hashing.sha256().hashString(sha256hex1, StandardCharsets.UTF_8).toString();
+                String sha256hex3 = Hashing.sha256().hashString(sha256hex2, StandardCharsets.UTF_8).toString();
+                return sha256hex3;
+            }
+            @Override
+            public boolean matches(CharSequence rawPassword, String encodedPassword) {
+                String sha256hex1 = Hashing.sha256().hashString(rawPassword, StandardCharsets.UTF_8).toString();
+                String sha256hex2 = Hashing.sha256().hashString(sha256hex1, StandardCharsets.UTF_8).toString();
+                String sha256hex3 = Hashing.sha256().hashString(sha256hex2, StandardCharsets.UTF_8).toString();
+                return encodedPassword.equals(sha256hex3);
+            }
+
+        };
+    }*/
 }

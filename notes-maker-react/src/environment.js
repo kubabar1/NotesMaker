@@ -7,6 +7,10 @@ export const ALL_PUBLISHED_NOTES_LIST = "http://localhost:8080/notes/published/a
 export const CURRENT_USER = "http://localhost:8080/current-user/data"
 export const ADD_NOTE_ENDPOINT = "http://localhost:8080/notes"
 
-export const PUBLISH_ENDPOINT = "http://localhost:8080/notes"
-export const PUBLISH_ENDPOINT = "http://localhost:8080/notes"
-export const PUBLISH_ENDPOINT = "http://localhost:8080/notes"
+export const DELETE_ENDPOINT = "http://localhost:8080/notes"
+export const UPDATE_ENDPOINT = "http://localhost:8080/notes"
+export const PUBLISH_ENDPOINT = "http://localhost:8080/notes/publish"
+export const UNPUBLISH_ENDPOINT = "http://localhost:8080/notes/unpublish"
+
+export const UPDATE_USER_DATA_ENDPOINT = "http://localhost:8080/current-user/update-data"
+export const UPDATE_USER_PASSWORD_ENDPOINT = "http://localhost:8080/current-user/update-password"
