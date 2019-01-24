@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateUserPassword(Long userId, String newPassword) {
+    public void updateUserPassword(Long userId, String newPassword) throws UserNotFoundException {
         User oldUser = userRepository.findById(userId).orElseThrow(() ->
                 new UserNotFoundException("User with given ID=\"" + userId + "\" not found"));
 
