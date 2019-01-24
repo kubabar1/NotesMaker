@@ -1,21 +1,64 @@
 import React, {Component} from 'react';
 import {FormGroup,ControlLabel,FormControl,HelpBlock,Button} from "react-bootstrap";
 import {Link} from "react-router-dom";
+import {UPDATE_USER_DATA_ENDPOINT} from "../../environment";
+import { withCookies } from 'react-cookie';
 
 class Settings extends Component {
 
     constructor(props, context) {
       super(props, context);
-
-      this.handleChange = this.handleChange.bind(this);
+      const {cookies} = props;
 
       this.state = {
         name: '',
         surname: '',
         login: '',
         email: '',
-        birthdate: ''
+        birthdate: '',
+        csrfToken:cookies.get('XSRF-TOKEN')
       };
+    }
+
+    componentDidMount(){
+      const currentUser = this.props.currentUser;
+
+      if(currentUser){
+        this.setState({
+          name: currentUser.name,
+          surname: currentUser.surname,
+          email: currentUser.email,
+          birthdate: currentUser.birthdate
+        });
+      }
+    }
+
+    updateUser = (event) => {
+      event.preventDefault();
+
+      const formData = new FormData();
+
+      const name = this.state.name;
+      const surname = this.state.surname;
+      const email = this.state.email;
+      const birthdate = this.state.birthdate;
+
+      formData.append("name", name);
+      formData.append("surname", surname);
+      formData.append("email", email);
+      formData.append("birthDate", birthdate);
+
+      fetch(UPDATE_USER_DATA_ENDPOINT, {
+        credentials: 'include',
+        method: 'PUT',
+        body: formData,
+        headers: {
+            'X-XSRF-TOKEN': this.state.csrfToken
+        },
+      })
+      .then(r => this.props.getCurrentUser())
+      .catch(e => console.log(e));
+
     }
 
 
@@ -25,9 +68,10 @@ class Settings extends Component {
     }
 
     render() {
+
         return (
           <div className="m-5">
-            <form>
+            <form onSubmit={this.updateUser}>
               <FormGroup controlId="name">
                 <ControlLabel>Name</ControlLabel>
                 <FormControl
@@ -44,16 +88,6 @@ class Settings extends Component {
                   type="text"
                   value={this.state.surname}
                   placeholder="Enter surname"
-                  onChange={this.handleChange}
-                />
-              </FormGroup>
-
-              <FormGroup controlId="login">
-                <ControlLabel>Login</ControlLabel>
-                <FormControl
-                  type="text"
-                  value={this.state.login}
-                  placeholder="Enter login"
                   onChange={this.handleChange}
                 />
               </FormGroup>
@@ -88,4 +122,4 @@ class Settings extends Component {
     }
 }
 
-export default Settings;
+export default withCookies(Settings);

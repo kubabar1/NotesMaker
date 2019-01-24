@@ -5,10 +5,13 @@ import App from './App';
 //import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter, Route } from 'react-router-dom'
 import * as serviceWorker from './serviceWorker';
+import { CookiesProvider } from 'react-cookie';
 
 ReactDOM.render(
   <BrowserRouter>
-    <Route path="/" component={App}/>
+    <CookiesProvider>
+      <Route path="/" component={App}/>
+    </CookiesProvider>
   </BrowserRouter>
   , document.getElementById('root'));
 

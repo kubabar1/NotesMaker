@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {Link} from "react-router-dom";
 
 class Note extends Component {
+
     render() {
         const content = this.props.content;
         const title = this.props.title;
@@ -10,7 +11,7 @@ class Note extends Component {
         const author = this.props.author;
 
         return (
-          <Link to={'/notes/'+id} style={{color:"#000000"}}>
+          <Link to={'/'+author+'/notes/'+id} style={{color:"#000000"}}>
             <div className="card-container col-lg-3 col-md-4 m-5">
               <div className="card" style={{padding:5}}>
                 <div className="text-center">
