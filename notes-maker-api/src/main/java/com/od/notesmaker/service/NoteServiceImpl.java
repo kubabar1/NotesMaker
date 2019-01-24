@@ -62,4 +62,14 @@ public class NoteServiceImpl implements NoteService {
 
         noteRepository.deleteById(noteId);
     }
+
+    @Override
+    public List<Note> getUserNotes(Long userId) {
+        return noteRepository.getUserNotesByUserId(userId);
+    }
+
+    @Override
+    public List<Note> getAllPublishedNotes() {
+        return noteRepository.getAllPublishedNotes();
+    }
 }

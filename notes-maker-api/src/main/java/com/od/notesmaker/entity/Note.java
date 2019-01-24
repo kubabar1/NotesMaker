@@ -1,5 +1,7 @@
 package com.od.notesmaker.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -28,6 +30,10 @@ public class Note implements Serializable {
 
     @Column(name = "creationdate")
     private Timestamp creationDate;
+
+    @JsonIgnore
+    @Column(name = "published")
+    private Boolean published;
 
     public Note() {
     }
@@ -83,21 +89,30 @@ public class Note implements Serializable {
         this.user = user;
     }
 
+    public Boolean getPublished() {
+        return published;
+    }
+
+    public void setPublished(Boolean published) {
+        this.published = published;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Note note = (Note) o;
-        return id == note.id &&
+        return Objects.equals(id, note.id) &&
                 Objects.equals(user, note.user) &&
                 Objects.equals(name, note.name) &&
                 Objects.equals(content, note.content) &&
-                Objects.equals(creationDate, note.creationDate);
+                Objects.equals(creationDate, note.creationDate) &&
+                Objects.equals(published, note.published);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, user, name, content, creationDate);
+        return Objects.hash(id, user, name, content, creationDate, published);
     }
 
     @Override
@@ -108,6 +123,7 @@ public class Note implements Serializable {
                 ", name='" + name + '\'' +
                 ", content='" + content + '\'' +
                 ", creationDate=" + creationDate +
+                ", published=" + published +
                 '}';
     }
 }

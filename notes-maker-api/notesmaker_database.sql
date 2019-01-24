@@ -30,6 +30,7 @@ CREATE TABLE Notes(
 	name NVARCHAR(100) NOT NULL,
 	content NVARCHAR(255) COLLATE utf8_unicode_ci NOT NULL,
 	creationDate DATETIME NOT NULL,
+	published BIT DEFAULT 0, 
 	FOREIGN KEY(userID) REFERENCES Users(ID),
 	PRIMARY KEY(ID)
 );

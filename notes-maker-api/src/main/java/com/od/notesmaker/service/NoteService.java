@@ -18,4 +18,7 @@ public interface NoteService {
 
     void deleteNote(Long noteId) throws NoteNotFoundException;
 
+    List<Note> getUserNotes(Long userId);
+
+    List<Note> getAllPublishedNotes();
 }
