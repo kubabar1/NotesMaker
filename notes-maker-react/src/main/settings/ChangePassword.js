@@ -2,11 +2,13 @@ import React, {Component} from 'react';
 import {FormGroup,ControlLabel,FormControl,HelpBlock,Button,ProgressBar} from "react-bootstrap";
 import {UPDATE_USER_PASSWORD_ENDPOINT} from "../../environment";
 import {withRouter} from "react-router-dom";
+import { withCookies } from 'react-cookie';
 
 class ChangePassword extends Component {
 
     constructor(props, context) {
       super(props, context);
+      const {cookies} = props;
 
       this.handleChange = this.handleChange.bind(this);
 
@@ -16,7 +18,8 @@ class ChangePassword extends Component {
         passwordNewRepeat: '',
         errorMessage: null,
         passwordEntropy:0,
-        passwordStrength:''
+        passwordStrength:'',
+        csrfToken:cookies.get('XSRF-TOKEN')
       };
     }
 
@@ -80,7 +83,10 @@ class ChangePassword extends Component {
           fetch(UPDATE_USER_PASSWORD_ENDPOINT, {
             credentials: 'include',
             method: 'PUT',
-            body: formData
+            body: formData,
+            headers: {
+                'X-XSRF-TOKEN': this.state.csrfToken
+            },
           })
           .then(r => {
             r.ok ? this.props.history.push('/') : r.text().then((text) => {this.setState({ errorMessage: text })});
@@ -151,4 +157,4 @@ class ChangePassword extends Component {
     }
 }
 
-export default withRouter(ChangePassword);
+export default withCookies(withRouter(ChangePassword));

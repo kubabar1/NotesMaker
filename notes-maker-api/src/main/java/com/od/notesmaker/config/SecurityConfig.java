@@ -18,17 +18,31 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfFilter;
+import org.springframework.security.web.csrf.CsrfToken;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.savedrequest.RequestCache;
+import org.springframework.security.web.savedrequest.SimpleSavedRequest;
+import org.springframework.security.web.session.SessionManagementFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.OncePerRequestFilter;
 
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 
@@ -48,7 +62,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     //@Value("${spring.security.scanning.token}")
     //private String scanningToken;
-
 
     /*@Autowired
     public void configAuthentication(AuthenticationManagerBuilder auth) throws Exception {
@@ -88,11 +101,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 .and()
-                .cors().and()
-                //.addFilterBefore(new TokenAuthenticationFilter(scanningToken), UsernamePasswordAuthenticationFilter.class)
-                .csrf().disable()
-                //.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                //.and()
+                .cors()
+                .and()
                 .exceptionHandling()
                 .authenticationEntryPoint(restAuthenticationEntryPoint) //deafult entry point returns FULL PAGE unauthorized, not well suited for rest login
                 .and()
@@ -109,16 +119,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 })
                 .permitAll()
                 .and()
-                .logout();
+                //.addFilterBefore(new TokenAuthenticationFilter(scanningToken), UsernamePasswordAuthenticationFilter.class)
+                .csrf()
+                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                .and()
+                .logout().logoutSuccessUrl("/");
     }
+
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         final CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(asList("*"));
+        configuration.setAllowedOrigins(asList("http://localhost:3000"));
         configuration.setAllowedMethods(asList("HEAD", "GET", "POST", "PUT", "DELETE", "PATCH"));
         configuration.setAllowCredentials(true);
-        configuration.setAllowedHeaders(asList("Authorization", "Cache-Control", "Content-Type", "credentials"));
+        configuration.setAllowedHeaders(asList("Authorization", "Cache-Control", "Content-Type", "credentials", "X-XSRF-TOKEN", "XSRF-TOKEN"));
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
@@ -131,11 +146,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public PasswordEncoder encoder() {
-        return new BCryptPasswordEncoder(){
+        return new BCryptPasswordEncoder() {
             @Override
             public boolean matches(CharSequence rawPassword, String encodedPassword) {
                 try {
-                    TimeUnit.MILLISECONDS.sleep(new Random().nextInt(200)+100);
+                    TimeUnit.MILLISECONDS.sleep(new Random().nextInt(200) + 100);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -166,3 +181,23 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         };
     }*/
 }
+/*
+class CsrfTokenResponseHeaderBindingFilter extends OncePerRequestFilter {
+    protected static final String REQUEST_ATTRIBUTE_NAME = "_csrf";
+    protected static final String RESPONSE_HEADER_NAME = "X-CSRF-HEADER";
+    protected static final String RESPONSE_PARAM_NAME = "X-CSRF-PARAM";
+    protected static final String RESPONSE_TOKEN_NAME = "X-CSRF-TOKEN";
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, javax.servlet.FilterChain filterChain) throws ServletException, IOException {
+        CsrfToken token = (CsrfToken) request.getAttribute(REQUEST_ATTRIBUTE_NAME);
+
+        if (token != null) {
+            response.setHeader(RESPONSE_HEADER_NAME, token.getHeaderName());
+            response.setHeader(RESPONSE_PARAM_NAME, token.getParameterName());
+            response.setHeader(RESPONSE_TOKEN_NAME , token.getToken());
+        }
+
+        filterChain.doFilter(request, response);
+    }
+}*/

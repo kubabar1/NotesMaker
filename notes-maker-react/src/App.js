@@ -10,20 +10,20 @@ import ChangePassword from "./main/settings/ChangePassword";
 import Login from "./login/Login";
 import {Redirect, Switch, Route} from "react-router-dom";
 import {LOGIN_ENDPOINT,LOGOUT_ENDPOINT,CHECK_AUTHENTICATED,CURRENT_USER} from "./environment";
-//import { withCookies } from 'react-cookie';
+import { withCookies } from 'react-cookie';
 
 class App extends Component {
 
   constructor(props, context) {
     super(props, context);
-    //const {cookies} = props;
+    const {cookies} = props;
 
     this.state = {
       showLoginForm: false,
       isAuthenticated: false,
       componentLoaded:false,
       currentUser:null,
-      //csrfToken:cookies.get('XSRF-TOKEN')
+      csrfToken:cookies.get('XSRF-TOKEN')
     };
   }
 
@@ -31,7 +31,10 @@ class App extends Component {
   componentDidMount(){
     fetch(CHECK_AUTHENTICATED, {
         credentials: 'include',
-        method: 'GET'
+        method: 'GET',
+        headers: {
+            'X-XSRF-TOKEN': this.state.csrfToken
+        },
     })
     .then(response => {
       if(response.ok){
@@ -47,7 +50,7 @@ class App extends Component {
   getCurrentUser = () => {
     fetch(CURRENT_USER,{
       headers: {
-          'Content-Type': 'application/json'
+          'X-XSRF-TOKEN': this.state.csrfToken
       },
       credentials: 'include'})
     .then(resp => resp.json())
@@ -58,7 +61,7 @@ class App extends Component {
   }
 
   authenticate = (cb, username, password) => {
-
+    console.log(this.state.csrfToken)
     const formData = new FormData();
 
     formData.append("username", username);
@@ -67,7 +70,10 @@ class App extends Component {
     fetch(LOGIN_ENDPOINT, {
         credentials: 'include',
         method: 'POST',
-        body: formData
+        body: formData,
+        headers: {
+            'X-XSRF-TOKEN': this.state.csrfToken
+        },
       }).then(response => {
         if(response.ok){
           this.getCurrentUser();
@@ -83,6 +89,9 @@ class App extends Component {
     fetch(LOGOUT_ENDPOINT, {
       credentials: 'include',
       method: 'POST',
+      headers: {
+          'X-XSRF-TOKEN': this.state.csrfToken
+      },
     })
     .then(e => this.setState({ isAuthenticated:false }))
     .catch(e => console.log(e));
@@ -172,7 +181,7 @@ class App extends Component {
   }
 }
 
-export default App;//withCookies(App);
+export default withCookies(App);
 
 const Empty = () => {
   return "";

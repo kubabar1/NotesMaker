@@ -3,21 +3,24 @@ import Note from './Note';
 import {Button} from "react-bootstrap";
 import {Link} from "react-router-dom";
 import {ALL_PUBLISHED_NOTES_LIST} from "../../environment";
+import { withCookies } from 'react-cookie';
 
 class PublicNotes extends Component {
 
     constructor(props){
       super(props);
+      const {cookies} = props;
 
       this.state={
-        notesList:null
+        notesList:null,
+        csrfToken:cookies.get('XSRF-TOKEN')
       }
     }
 
     componentDidMount(){
       fetch(ALL_PUBLISHED_NOTES_LIST,{
         headers: {
-            'Content-Type': 'application/json'
+            'X-XSRF-TOKEN': this.state.csrfToken
         },
         credentials: 'include'})
       .then(resp => resp.json())
@@ -52,4 +55,4 @@ class PublicNotes extends Component {
     }
 }
 
-export default PublicNotes;
+export default withCookies(PublicNotes);

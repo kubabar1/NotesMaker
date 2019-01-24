@@ -2,18 +2,21 @@ import React, {Component} from 'react';
 import {FormGroup,ControlLabel,FormControl,HelpBlock,Button} from "react-bootstrap";
 import {Link} from "react-router-dom";
 import {UPDATE_USER_DATA_ENDPOINT} from "../../environment";
+import { withCookies } from 'react-cookie';
 
 class Settings extends Component {
 
     constructor(props, context) {
       super(props, context);
+      const {cookies} = props;
 
       this.state = {
         name: '',
         surname: '',
         login: '',
         email: '',
-        birthdate: ''
+        birthdate: '',
+        csrfToken:cookies.get('XSRF-TOKEN')
       };
     }
 
@@ -48,7 +51,10 @@ class Settings extends Component {
       fetch(UPDATE_USER_DATA_ENDPOINT, {
         credentials: 'include',
         method: 'PUT',
-        body: formData
+        body: formData,
+        headers: {
+            'X-XSRF-TOKEN': this.state.csrfToken
+        },
       })
       .then(r => this.props.getCurrentUser())
       .catch(e => console.log(e));
@@ -116,4 +122,4 @@ class Settings extends Component {
     }
 }
 
-export default Settings;
+export default withCookies(Settings);

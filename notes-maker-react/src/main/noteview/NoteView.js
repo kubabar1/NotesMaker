@@ -2,16 +2,19 @@ import React, {Component} from 'react';
 import {Button} from 'react-bootstrap';
 import {SINGLE_USER_NOTE,PUBLISH_ENDPOINT,UNPUBLISH_ENDPOINT,DELETE_ENDPOINT} from "../../environment";
 import {withRouter} from "react-router-dom";
+import { withCookies } from 'react-cookie';
 
 class NoteView extends Component {
 
     constructor(props){
       super(props);
+      const {cookies} = props;
 
       this.state={
         note:null,
         unauthorizedError:false,
-        published:null
+        published:null,
+        csrfToken:cookies.get('XSRF-TOKEN')
       }
     }
 
@@ -39,7 +42,7 @@ class NoteView extends Component {
           fetch(UNPUBLISH_ENDPOINT+"/"+id,{
             method:"PUT",
             headers: {
-                'Content-Type': 'application/json'
+                'X-XSRF-TOKEN': this.state.csrfToken
             },
             credentials: 'include'})
           .then(resp => this.setState({published:false}))
@@ -48,7 +51,7 @@ class NoteView extends Component {
           fetch(PUBLISH_ENDPOINT+"/"+id,{
             method:"PUT",
             headers: {
-                'Content-Type': 'application/json'
+                'X-XSRF-TOKEN': this.state.csrfToken
             },
             credentials: 'include'})
           .then(resp => {this.setState({published:true});})
@@ -66,7 +69,7 @@ class NoteView extends Component {
       fetch(DELETE_ENDPOINT+"/"+id,{
         method:"DELETE",
         headers: {
-            'Content-Type': 'application/json'
+            'X-XSRF-TOKEN': this.state.csrfToken
         },
         credentials: 'include'})
       .then(resp => this.props.history.push('/my-notes'))
@@ -118,4 +121,4 @@ class NoteView extends Component {
     }
 }
 
-export default withRouter(NoteView);
+export default withCookies(withRouter(NoteView));

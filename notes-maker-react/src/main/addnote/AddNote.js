@@ -1,16 +1,19 @@
 import React, {Component} from 'react';
 import {FormGroup,ControlLabel,FormControl,HelpBlock,Button} from "react-bootstrap";
 import {ADD_NOTE_ENDPOINT} from "../../environment";
+import { withCookies } from 'react-cookie';
 
 class AddNote extends Component {
 
     constructor(props, context) {
       super(props, context);
+      const {cookies} = props;
 
       this.state = {
         noteTitle: '',
         noteContent: '',
-        errorMessage:null
+        errorMessage:null,
+        csrfToken:cookies.get('XSRF-TOKEN')
       };
     }
 
@@ -46,7 +49,10 @@ class AddNote extends Component {
       fetch(ADD_NOTE_ENDPOINT, {
         credentials: 'include',
         method: 'POST',
-        body: formData
+        body: formData,
+        headers: {
+            'X-XSRF-TOKEN': this.state.csrfToken
+        },
       }).then(response => {
         this.setState({
           noteTitle: '',
@@ -96,4 +102,4 @@ class AddNote extends Component {
     }
 }
 
-export default AddNote;
+export default withCookies(AddNote);
