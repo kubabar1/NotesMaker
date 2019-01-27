@@ -18,6 +18,8 @@ class App extends Component {
     super(props, context);
     const {cookies} = props;
 
+
+
     this.state = {
       showLoginForm: false,
       isAuthenticated: false,
@@ -29,12 +31,13 @@ class App extends Component {
 
 
   componentDidMount(){
+
     fetch(CHECK_AUTHENTICATED, {
-        credentials: 'include',
         method: 'GET',
         headers: {
             'X-XSRF-TOKEN': this.state.csrfToken
         },
+        credentials: 'include'
     })
     .then(response => {
       if(response.ok){
@@ -52,7 +55,7 @@ class App extends Component {
       headers: {
           'X-XSRF-TOKEN': this.state.csrfToken
       },
-      credentials: 'include'})
+      credentials: "include"})
     .then(resp => resp.json())
     .then(json=>this.setState({
       currentUser:json
@@ -61,19 +64,21 @@ class App extends Component {
   }
 
   authenticate = (cb, username, password) => {
-    console.log(this.state.csrfToken)
+
     const formData = new FormData();
 
     formData.append("username", username);
     formData.append("password", password);
 
+    console.log(this.state.csrfToken)
+
     fetch(LOGIN_ENDPOINT, {
-        credentials: 'include',
-        method: 'POST',
-        body: formData,
-        headers: {
+        method: "POST",
+          headers: {
             'X-XSRF-TOKEN': this.state.csrfToken
-        },
+          },
+          body: formData,
+          credentials: 'include'
       }).then(response => {
         if(response.ok){
           this.getCurrentUser();
@@ -87,11 +92,11 @@ class App extends Component {
 
   signout = (cb) => {
     fetch(LOGOUT_ENDPOINT, {
-      credentials: 'include',
       method: 'POST',
       headers: {
           'X-XSRF-TOKEN': this.state.csrfToken
       },
+      credentials: 'include',
     })
     .then(e => this.setState({ isAuthenticated:false }))
     .catch(e => console.log(e));
@@ -107,9 +112,8 @@ class App extends Component {
     this.setState({ showLoginForm: true });
   }
 
-
-
   render() {
+
     return (
       <div className="container-fluid">
         <div className="row">
@@ -163,7 +167,8 @@ class App extends Component {
                                           currentUser={this.state.currentUser}/>}
                   isAuthenticated={this.state.isAuthenticated}
                   handleShowLoginForm={this.handleShowLoginForm}
-                  componentLoaded={this.state.componentLoaded}/>
+                  componentLoaded={this.state.componentLoaded}
+                  />
               </Switch>):""
             }
           </div>
