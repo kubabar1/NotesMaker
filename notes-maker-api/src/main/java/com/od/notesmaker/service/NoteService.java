@@ -10,15 +10,15 @@ public interface NoteService {
 
     void addNote(Note note, Long userId) throws UserNotFoundException;
 
+    List<Note> getUserNotes(Long userId);
+
     List<Note> getAllNotes();
 
-    Note getNoteById(Long noteId);
+    List<Note> getAllPublishedNotes();
+
+    Note getNoteById(Long noteId) throws NoteNotFoundException;
 
     void updateNote(Long noteId, Note noteDetails) throws NoteNotFoundException;
 
     void deleteNote(Long noteId) throws NoteNotFoundException;
-
-    List<Note> getUserNotes(Long userId);
-
-    List<Note> getAllPublishedNotes();
 }

@@ -4,7 +4,10 @@ import com.od.notesmaker.entity.User;
 import com.od.notesmaker.exception.UserNotFoundException;
 import com.od.notesmaker.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -12,20 +15,19 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
 
     @Override
     public User getUserByLogin(String login) throws UserNotFoundException {
-        User user = userRepository.getUserByLogin(login);
-
-        if (user == null) {
-            throw new UserNotFoundException("User with given login=\"" + login + "\" not found");
-        } else {
-            return userRepository.getUserByLogin(login);
-        }
+        return Optional
+                .ofNullable(userRepository.getUserByLogin(login))
+                .orElseThrow(() -> new UserNotFoundException("User with given login=\"" + login + "\" not found"));
     }
 
     @Override
-    public void updateUser(Long userId, User userDetails) throws UserNotFoundException {
+    public void updateUserDetails(Long userId, User userDetails) throws UserNotFoundException {
         User oldUser = userRepository.findById(userId).orElseThrow(() ->
                 new UserNotFoundException("User with given ID=\"" + userId + "\" not found"));
 
@@ -42,7 +44,7 @@ public class UserServiceImpl implements UserService {
         User oldUser = userRepository.findById(userId).orElseThrow(() ->
                 new UserNotFoundException("User with given ID=\"" + userId + "\" not found"));
 
-        oldUser.setPassword(newPassword);
+        oldUser.setPassword(passwordEncoder.encode(newPassword));
 
         userRepository.save(oldUser);
     }

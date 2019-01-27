@@ -4,6 +4,7 @@ import com.od.notesmaker.service.AppUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -15,6 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -23,8 +25,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
-import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 import static java.util.Arrays.asList;
 
@@ -63,6 +63,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 .and()
                 .cors()
+                .configurationSource(corsConfigurationSource())
                 .and()
                 .exceptionHandling()
                 .authenticationEntryPoint(restAuthenticationEntryPoint) //deafult entry point returns FULL PAGE unauthorized, not well suited for rest login
@@ -81,21 +82,27 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .and()
                 .csrf()
+                .ignoringAntMatchers("/logout", "/login")
                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                 .and()
-                .logout().logoutSuccessUrl("/");
+                .logout()
+                .permitAll()
+                .logoutSuccessHandler((new HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK)))
+                .deleteCookies("JSESSIONID", "XSRF-TOKEN")
+                .invalidateHttpSession(true);
     }
 
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         final CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(asList("http://localhost:3000"));
+        configuration.setAllowedOrigins(asList("https://localhost:3000"));
         configuration.setAllowedMethods(asList("HEAD", "GET", "POST", "PUT", "DELETE", "PATCH"));
         configuration.setAllowCredentials(true);
-        configuration.setAllowedHeaders(asList("Authorization", "Cache-Control", "Content-Type", "credentials", "X-XSRF-TOKEN", "XSRF-TOKEN"));
+        configuration.setAllowedHeaders(asList("Authorization", "Cache-Control", "Content-Type", "credentials", "X-XSRF-TOKEN"));
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
+
         return source;
     }
 

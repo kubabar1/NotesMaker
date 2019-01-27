@@ -7,7 +7,7 @@ public interface UserService {
 
     User getUserByLogin(String login) throws UserNotFoundException;
 
-    void updateUser(Long userId, User userDetails) throws UserNotFoundException;
+    void updateUserDetails(Long userId, User userDetails) throws UserNotFoundException;
 
-    void updateUserPassword(Long id, String encode) throws UserNotFoundException;
+    void updateUserPassword(Long userId, String newPassword) throws UserNotFoundException;
 }
