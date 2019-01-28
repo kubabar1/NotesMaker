@@ -117,6 +117,10 @@ class Settings extends Component {
             <Link to={'/change-password'}>
               <Button bsStyle="link" style={{marginTop:20}}>Change password</Button>
             </Link>
+            <br></br>
+            <Link to={'/last-logins'}>
+              <Button bsStyle="link" style={{marginTop:20}}>Last login list</Button>
+            </Link>
           </div>
         );
     }

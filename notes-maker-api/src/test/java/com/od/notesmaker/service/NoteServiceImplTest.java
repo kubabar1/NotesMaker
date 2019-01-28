@@ -20,7 +20,7 @@ import static org.junit.Assert.*;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @Transactional
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+//@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class NoteServiceImplTest {
 
     @Autowired
@@ -35,7 +35,7 @@ public class NoteServiceImplTest {
         java.util.Date dateX = sdf1X.parse(creationDate);
         java.sql.Timestamp sqlCreationDate = new java.sql.Timestamp(dateX.getTime());
 
-        note = new Note("Test 1", "Zażółć gęślą jaźń");
+        note = new Note("Test 1", "Testing notes");
         note.setPublished(false);
         note.setId((long) 1);
         note.setCreationDate(sqlCreationDate);

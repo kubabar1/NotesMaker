@@ -10,4 +10,9 @@ public interface UserService {
     void updateUserDetails(Long userId, User userDetails) throws UserNotFoundException;
 
     void updateUserPassword(Long userId, String newPassword) throws UserNotFoundException;
+
+    boolean userLoginExists(String login);
+
+    boolean userEmailExists(String email);
+
 }

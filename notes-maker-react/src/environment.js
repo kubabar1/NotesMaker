@@ -34,3 +34,4 @@ export const UNPUBLISH_ENDPOINT = "https://localhost:8443/notes/unpublish"
 
 export const UPDATE_USER_DATA_ENDPOINT = "https://localhost:8443/current-user/update-data"
 export const UPDATE_USER_PASSWORD_ENDPOINT = "https://localhost:8443/current-user/update-password"
+export const LAST_LOGINS = "https://localhost:8443/security/last-logins"

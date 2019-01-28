@@ -28,5 +28,5 @@ CREATE TABLE Notes(
 INSERT INTO users(name,surname,login,password,email,birthDate) VALUES ('Jan', 'Kowalski', 'jan123','$2a$10$FabGp5zLvInm/DAcHtmRc.ws1.tQK7eXamK/mCj/BPCSlB5yDyNH2','jan123@test.com','2012-12-11');
 INSERT INTO users(name,surname,login,password,email,birthDate) VALUES ('Paweł', 'Adamowski', 'pawel123','$2a$10$FabGp5zLvInm/DAcHtmRc.ws1.tQK7eXamK/mCj/BPCSlB5yDyNH2','pawel123@test.com','2011-11-01');
 
-INSERT INTO notes(userID, name, content, creationDate) VALUES (1,'Test 1','Zażółć gęślą jaźń', '2019-01-05 12:12:12');
+INSERT INTO notes(userID, name, content, creationDate) VALUES (1,'Test 1','Testing notes', '2019-01-05 12:12:12');
 INSERT INTO notes(userID, name, content, creationDate, published) VALUES (2,'Test 2','Lorem ipsum', '2019-01-03 10:10:10', 1);

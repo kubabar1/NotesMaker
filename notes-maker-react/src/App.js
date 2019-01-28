@@ -11,6 +11,7 @@ import Login from "./login/Login";
 import {Redirect, Switch, Route} from "react-router-dom";
 import {LOGIN_ENDPOINT,LOGOUT_ENDPOINT,CHECK_AUTHENTICATED,CURRENT_USER} from "./environment";
 import { withCookies } from 'react-cookie';
+import LastLogins from "./main/settings/LastLogins"
 
 class App extends Component {
 
@@ -158,6 +159,12 @@ class App extends Component {
                 <PrivateRoute
                   path="/change-password"
                   component={ChangePassword}
+                  isAuthenticated={this.state.isAuthenticated}
+                  handleShowLoginForm={this.handleShowLoginForm}
+                  componentLoaded={this.state.componentLoaded}/>
+                <PrivateRoute
+                  path="/last-logins"
+                  component={LastLogins}
                   isAuthenticated={this.state.isAuthenticated}
                   handleShowLoginForm={this.handleShowLoginForm}
                   componentLoaded={this.state.componentLoaded}/>

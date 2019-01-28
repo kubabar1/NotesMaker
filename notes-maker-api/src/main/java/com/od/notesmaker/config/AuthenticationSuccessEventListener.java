@@ -1,6 +1,6 @@
 package com.od.notesmaker.config;
 
-import com.od.notesmaker.service.LoginAttemptService;
+import com.od.notesmaker.service.LoginAttemptServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
@@ -12,11 +12,11 @@ public class AuthenticationSuccessEventListener
         implements ApplicationListener<AuthenticationSuccessEvent> {
 
     @Autowired
-    private LoginAttemptService loginAttemptService;
+    private LoginAttemptServiceImpl loginAttemptServiceImpl;
 
     public void onApplicationEvent(AuthenticationSuccessEvent e) {
         WebAuthenticationDetails auth = (WebAuthenticationDetails)e.getAuthentication().getDetails();
 
-        loginAttemptService.loginSucceeded(e.getAuthentication().getName());
+        loginAttemptServiceImpl.loginSucceeded(e.getAuthentication().getName());
     }
 }

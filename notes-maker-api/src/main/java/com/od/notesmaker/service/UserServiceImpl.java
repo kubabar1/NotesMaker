@@ -48,4 +48,14 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(oldUser);
     }
+
+    @Override
+    public boolean userLoginExists(String login) {
+        return userRepository.getUserByLogin(login) != null ? true : false;
+    }
+
+    @Override
+    public boolean userEmailExists(String email) {
+        return userRepository.getUserByEmail(email) != null ? true : false;
+    }
 }
