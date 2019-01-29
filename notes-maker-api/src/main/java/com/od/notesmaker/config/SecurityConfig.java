@@ -1,11 +1,10 @@
 package com.od.notesmaker.config;
 
-import com.google.common.hash.Hashing;
 import com.od.notesmaker.service.AppUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -17,32 +16,15 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-import org.springframework.security.web.csrf.CsrfFilter;
-import org.springframework.security.web.csrf.CsrfToken;
-import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
-import org.springframework.security.web.savedrequest.RequestCache;
-import org.springframework.security.web.savedrequest.SimpleSavedRequest;
-import org.springframework.security.web.session.SessionManagementFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
-
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Random;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 
@@ -60,19 +42,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private AppUserDetailsService appUserDetailsService;
 
-    //@Value("${spring.security.scanning.token}")
-    //private String scanningToken;
-
-    /*@Autowired
-    public void configAuthentication(AuthenticationManagerBuilder auth) throws Exception {
-
-        auth.jdbcAuthentication().dataSource(dataSource)
-                .usersByUsernameQuery(
-                        "select login,password,1 as enabled from users where login=?")
-                .authoritiesByUsernameQuery(
-                        "select login, 'USER' from users where login=?");
-    }*/
-
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
@@ -86,14 +55,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         auth.authenticationProvider(authenticationProvider());
     }
 
-    /*@Override
-    protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication()
-                .withUser("admin").password(encoder().encode("adminPass")).roles("ADMIN")
-                .and()
-                .withUser("user").password(encoder().encode("userPass")).roles("USER");
-    }*/
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
@@ -102,6 +63,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 .and()
                 .cors()
+                .configurationSource(corsConfigurationSource())
                 .and()
                 .exceptionHandling()
                 .authenticationEntryPoint(restAuthenticationEntryPoint) //deafult entry point returns FULL PAGE unauthorized, not well suited for rest login
@@ -119,44 +81,34 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 })
                 .permitAll()
                 .and()
-                //.addFilterBefore(new TokenAuthenticationFilter(scanningToken), UsernamePasswordAuthenticationFilter.class)
                 .csrf()
+                .ignoringAntMatchers("/logout", "/login")
                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                 .and()
-                .logout().logoutSuccessUrl("/");
+                .logout()
+                .permitAll()
+                .logoutSuccessHandler((new HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK)))
+                .deleteCookies("JSESSIONID", "XSRF-TOKEN")
+                .invalidateHttpSession(true);
     }
 
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         final CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(asList("http://localhost:3000"));
+        configuration.setAllowedOrigins(asList("https://localhost:3000"));
         configuration.setAllowedMethods(asList("HEAD", "GET", "POST", "PUT", "DELETE", "PATCH"));
         configuration.setAllowCredentials(true);
-        configuration.setAllowedHeaders(asList("Authorization", "Cache-Control", "Content-Type", "credentials", "X-XSRF-TOKEN", "XSRF-TOKEN"));
+        configuration.setAllowedHeaders(asList("Authorization", "Cache-Control", "Content-Type", "credentials", "X-XSRF-TOKEN"));
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
+
         return source;
     }
 
-    /*@Bean(name="scanningToken")
-    public String scanningToken() {
-        return scanningToken;
-    }*/
-
     @Bean
     public PasswordEncoder encoder() {
-        return new BCryptPasswordEncoder() {
-            @Override
-            public boolean matches(CharSequence rawPassword, String encodedPassword) {
-                try {
-                    TimeUnit.MILLISECONDS.sleep(new Random().nextInt(200) + 100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                return super.matches(rawPassword, encodedPassword);
-            }
-        };
+        return new BCryptPasswordEncoder();
     }
 
 
@@ -181,23 +133,3 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         };
     }*/
 }
-/*
-class CsrfTokenResponseHeaderBindingFilter extends OncePerRequestFilter {
-    protected static final String REQUEST_ATTRIBUTE_NAME = "_csrf";
-    protected static final String RESPONSE_HEADER_NAME = "X-CSRF-HEADER";
-    protected static final String RESPONSE_PARAM_NAME = "X-CSRF-PARAM";
-    protected static final String RESPONSE_TOKEN_NAME = "X-CSRF-TOKEN";
-
-    @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, javax.servlet.FilterChain filterChain) throws ServletException, IOException {
-        CsrfToken token = (CsrfToken) request.getAttribute(REQUEST_ATTRIBUTE_NAME);
-
-        if (token != null) {
-            response.setHeader(RESPONSE_HEADER_NAME, token.getHeaderName());
-            response.setHeader(RESPONSE_PARAM_NAME, token.getParameterName());
-            response.setHeader(RESPONSE_TOKEN_NAME , token.getToken());
-        }
-
-        filterChain.doFilter(request, response);
-    }
-}*/

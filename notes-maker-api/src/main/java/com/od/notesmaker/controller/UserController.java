@@ -50,7 +50,7 @@ public class UserController {
     public ResponseEntity updateCurrentUserData(@Valid User userUpdate, Authentication authentication) {
         try {
             User currentUser = userService.getUserByLogin(authentication.getName());
-            userService.updateUser(currentUser.getId(), userUpdate);
+            userService.updateUserDetails(currentUser.getId(), userUpdate);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (UserNotFoundException e) {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
@@ -64,10 +64,10 @@ public class UserController {
         User currentUser = userService.getUserByLogin(authentication.getName());
 
         if (passwordEncoder.matches(currentPassword, currentUser.getPassword())) {
-            if(newPassword.length()<8){
-                return new ResponseEntity<>("Password cannot be shorter than 8 chars",HttpStatus.BAD_REQUEST);
-            }else{
-                userService.updateUserPassword(currentUser.getId(), passwordEncoder.encode(newPassword));
+            if (newPassword.length() < 8) {
+                return new ResponseEntity<>("Password cannot be shorter than 8 chars", HttpStatus.BAD_REQUEST);
+            } else {
+                userService.updateUserPassword(currentUser.getId(), newPassword);
                 return new ResponseEntity<>(HttpStatus.OK);
             }
         } else {

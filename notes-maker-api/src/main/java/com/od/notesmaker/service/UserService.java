@@ -5,9 +5,14 @@ import com.od.notesmaker.exception.UserNotFoundException;
 
 public interface UserService {
 
-    User getUserByLogin(String login);
+    User getUserByLogin(String login) throws UserNotFoundException;
 
-    void updateUser(Long userId, User userDetails) throws UserNotFoundException;
+    void updateUserDetails(Long userId, User userDetails) throws UserNotFoundException;
 
-    void updateUserPassword(Long id, String encode);
+    void updateUserPassword(Long userId, String newPassword) throws UserNotFoundException;
+
+    boolean userLoginExists(String login);
+
+    boolean userEmailExists(String email);
+
 }

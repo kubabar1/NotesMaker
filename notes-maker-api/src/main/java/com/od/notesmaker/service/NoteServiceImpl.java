@@ -23,7 +23,7 @@ public class NoteServiceImpl implements NoteService {
     private UserRepository userRepository;
 
     @Override
-    public void addNote(Note note, Long userId){
+    public void addNote(Note note, Long userId) throws UserNotFoundException{
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new UserNotFoundException("User with given ID=\"" + userId + "\" not found"));
 
@@ -39,7 +39,7 @@ public class NoteServiceImpl implements NoteService {
     }
 
     @Override
-    public Note getNoteById(Long noteId) {
+    public Note getNoteById(Long noteId) throws NoteNotFoundException {
         return noteRepository.findById(noteId).orElseThrow(() ->
                 new NoteNotFoundException("Note with given ID=\"" + noteId + "\" not found"));
     }

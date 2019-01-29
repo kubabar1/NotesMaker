@@ -51,6 +51,13 @@ public class User {
     public User() {
     }
 
+    public User(String name, String surname,String email, Date birthDate) {
+        this.name = name;
+        this.surname = surname;
+        this.email = email;
+        this.birthDate = birthDate;
+    }
+
     public User(String name, String surname, String login, String password, String email, Date birthDate) {
         this.name = name;
         this.surname = surname;
